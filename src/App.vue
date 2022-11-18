@@ -1,5 +1,6 @@
 <template>
   <b-container fluid="xl">
+    <a href="https://github.com/brantje/emudeck-compatibility-list" target="_blank" style="position: absolute; right: 0;"><img decoding="async" loading="lazy" width="149" height="149" src="https://github.blog/wp-content/uploads/2008/12/forkme_right_darkblue_121621.png?resize=149%2C149" class="attachment-full size-full" alt="Fork me on GitHub" data-recalc-dims="1"></a>
     <h1>Emudeck compatibility list</h1>
     <b-row>
       <b-col sm="12" md="3" xl="1"> </b-col>
@@ -44,7 +45,7 @@ export default {
         // Just in case sheet changes.
         for (let item of items) {
           roms.push({
-            timestamp: item["Timestamp"],
+            timestamp: item.Timestamp,
             console: item.Console,
             game: item.Game,
             emulator: item.Emulator,
