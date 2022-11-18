@@ -56,6 +56,7 @@ export default {
         this.roms = roms;
       })
       .catch((err) => {
+        console.log(err);
         // Manage the state of the application if the request
         // has failed
       });
@@ -63,5 +64,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>
