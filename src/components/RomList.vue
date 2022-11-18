@@ -3,6 +3,11 @@
     <b-col>
       <b-row class="mb-2">
         <b-col> {{ filteredList.length }} roms found </b-col>
+        <b-col>
+          <a href="https://docs.google.com/forms/d/e/1FAIpQLScavGFOuGpEVpyHdRVcPjdrCEquG9ItBaloa8Q0XaiNlu_Afg/viewform" class="btn btn-success float-right" target="_blank">
+            Add game
+          </a>
+        </b-col>
       </b-row>
       <b-row>
         <b-col>
