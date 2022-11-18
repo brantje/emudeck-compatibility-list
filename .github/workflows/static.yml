@@ -33,7 +33,7 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v2
       - name: Build Yarn and npm
-        uses: linchpin/action-build-yarn-npm@master        
+        uses: chimpwizards-pipeline/npm-build@v1.0.7     
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
