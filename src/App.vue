@@ -49,8 +49,8 @@ export default {
             console: item.Console,
             game: item.Game,
             emulator: item.Emulator,
-            boots: item["Boots?"] === "Yes",
-            playable: item["Playable?"] === "Yes",
+            boots: item["Boots"] === "Yes",
+            playable: item["Playable"] === "Yes",
             notes: item.Notes,
           });
         }
