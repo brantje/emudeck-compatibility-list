@@ -14,10 +14,18 @@
           <b-table
             striped
             dark
+            show-empty
             class="table"
+            :busy="loading"
             :items="filteredList"
             :fields="fields"
+            :per-page="perPage"
+            :current-page="currentPage"
+            primary-key="timestamp"
           >
+            <template #table-busy>
+              <div class="text-center text-light my-2">Loading ROMs...</div>
+            </template>
             <template #cell(boots)="data">
               <span v-if="data.item.boots">Yes</span>
               <span v-else>No</span>
@@ -27,6 +35,13 @@
               <span v-else>No</span>
             </template>
           </b-table>
+          <b-pagination
+            v-if="filteredList.length > perPage"
+            v-model="currentPage"
+            :total-rows="filteredList.length"
+            :per-page="perPage"
+            align="center"
+          ></b-pagination>
         </b-col>
       </b-row>
     </b-col>
@@ -38,6 +53,8 @@ export default {
   name: "RomList",
   data() {
     return {
+      currentPage: 1,
+      perPage: 50,
       fields: [
         {
           key: "game",
@@ -69,51 +86,36 @@ export default {
   props: {
     roms: Array,
     filters: Object,
+    loading: Boolean,
   },
-  methods: {
-    multipleExist(arr, values) {
-      return values.every((value) => {
-        return arr.includes(value);
-      });
+  watch: {
+    filters: {
+      deep: true,
+      handler() {
+        this.currentPage = 1;
+      },
     },
   },
   computed: {
     filteredList() {
-      let items = this.roms;
-      if (this.filters.name.length > 0) {
-        items = items.filter((item) => {
-          return (
-            item.game.toLowerCase().indexOf(this.filters.name.toLowerCase()) !=
-            -1
-          );
-        });
-      }
+      const filters = this.filters;
+      const name = filters.name.trim().toLowerCase();
+      const selectedConsoles = new Set(filters.console);
+      const selectedEmulators = new Set(filters.emulator);
+      const hasConsoleFilter = selectedConsoles.size > 0;
+      const hasEmulatorFilter = selectedEmulators.size > 0;
+      const bootsFilter = filters.boots;
+      const playableFilter = filters.playable;
 
-      if (this.filters.console.length > 0) {
-        items = items.filter((item) => {
-          return this.filters.console.indexOf(item.console) != -1;
-        });
-      }
+      return this.roms.filter((item) => {
+        if (name && !(item.gameLower || "").includes(name)) return false;
+        if (hasConsoleFilter && !selectedConsoles.has(item.console)) return false;
+        if (hasEmulatorFilter && !selectedEmulators.has(item.emulator)) return false;
+        if (bootsFilter !== null && item.boots !== bootsFilter) return false;
+        if (playableFilter !== null && item.playable !== playableFilter) return false;
 
-      if (this.filters.emulator.length > 0) {
-        items = items.filter((item) => {
-          return this.filters.emulator.indexOf(item.emulator) != -1;
-        });
-      }
-
-      if (this.filters.boots !== null) {
-        items = items.filter((item) => {
-          return item.boots === this.filters.boots;
-        });
-      }
-
-      if (this.filters.playable !== null) {
-        items = items.filter((item) => {
-          return item.playable === this.filters.playable;
-        });
-      }
-
-      return items;
+        return true;
+      });
     },
   },
 };
