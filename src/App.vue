@@ -5,9 +5,18 @@
     <b-row>
       <b-col sm="12" md="3" xl="1"> </b-col>
     </b-row>
-    <Filters :filters="filters" :roms="roms"></Filters>
 
-    <RomList :roms="roms" :filters="filters" />
+    <b-alert v-if="loadError" show variant="danger">
+      Could not load compatibility data. Please try refreshing the page.
+    </b-alert>
+
+    <Filters
+      :filters="filters"
+      :consoles="consoles"
+      :emulators="emulators"
+    ></Filters>
+
+    <RomList :roms="roms" :filters="filters" :loading="loading" />
   </b-container>
 </template>
 
@@ -24,6 +33,10 @@ export default {
   data() {
     return {
       roms: [],
+      consoles: [],
+      emulators: [],
+      loading: false,
+      loadError: false,
       filters: {
         name: "",
         console: [],
@@ -34,32 +47,38 @@ export default {
     };
   },
   mounted() {
+    this.loading = true;
     axios
       .get(
         "https://opensheet.elk.sh/1fRqvAh_wW8Ho_8i966CCSBgPJ2R_SuDFIvvKsQCv05w/Database"
       )
       .then((response) => {
-        const items = response.data;
-        const roms = [];
-        // Make sure the internal data structure is always the same
-        // Just in case sheet changes.
-        for (let item of items) {
-          roms.push({
+        const roms = response.data.map((item) => {
+          const game = item.Game || "";
+
+          return {
             timestamp: item.Timestamp,
             console: item.Console,
-            game: item.Game,
+            game,
+            gameLower: game.toLowerCase(),
             emulator: item.Emulator,
             boots: item["Boots"] === "Yes",
             playable: item["Playable"] === "Yes",
             notes: item.Notes,
-          });
-        }
+          };
+        });
+
         this.roms = roms;
+        this.consoles = [...new Set(roms.map((item) => item.console))].sort();
+        this.emulators = [...new Set(roms.map((item) => item.emulator))].sort();
+        this.loadError = false;
       })
       .catch((err) => {
         console.log(err);
-        // Manage the state of the application if the request
-        // has failed
+        this.loadError = true;
+      })
+      .finally(() => {
+        this.loading = false;
       });
   },
 };

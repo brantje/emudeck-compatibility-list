@@ -3,15 +3,16 @@
     <b-col>
       <b-form inline class="mb-3">
         <b-form-input
-          id="input-1"
+          id="title-search-input"
           v-model="filterInput.name"
+          debounce="150"
           placeholder="Search for title.."
           class="mb-2 mr-sm-2 mb-sm-0"
         ></b-form-input>
         <b-dropdown
-          id="dropdown-form"
+          id="console-filter-dropdown"
           text="Console"
-          ref="dropdown"
+          ref="consoleDropdown"
           class="m-2 max-height"
         >
           <b-dropdown-form>
@@ -20,7 +21,7 @@
                 inline
                 class="mb-3 text-left"
                 v-model="filterInput.console"
-                :id="console"
+                :id="`console-${console}`"
                 :value="console"
               >
                 {{ console }}
@@ -29,9 +30,9 @@
           </b-dropdown-form>
         </b-dropdown>
         <b-dropdown
-          id="dropdown-form"
+          id="emulator-filter-dropdown"
           text="Emulator"
-          ref="dropdown"
+          ref="emulatorDropdown"
           class="m-2 max-height"
         >
           <b-dropdown-form>
@@ -44,7 +45,7 @@
                 inline
                 class="mb-3 text-left"
                 v-model="filterInput.emulator"
-                :id="emulator"
+                :id="`emulator-${emulator}`"
                 :value="emulator"
               >
                 {{ emulator }}
@@ -54,7 +55,7 @@
         </b-dropdown>
         <b-input-group prepend="Boots" class="mb-2 mr-sm-2 mb-sm-0">
           <b-form-select
-            id="inline-form-input-username"
+            id="boots-filter-select"
             placeholder=" - "
             v-model="filterInput.boots"
             :options="yesNoOptions"
@@ -63,7 +64,7 @@
         </b-input-group>
         <b-input-group prepend="Playable" class="mb-2 mr-sm-2 mb-sm-0">
           <b-form-select
-            id="inline-form-input-username"
+            id="playable-filter-select"
             placeholder=" - "
             v-model="filterInput.playable"
             :options="yesNoOptions"
@@ -77,7 +78,11 @@
 <script>
 export default {
   name: "Filters",
-  props: ["filters", "roms"],
+  props: {
+    filters: Object,
+    consoles: Array,
+    emulators: Array,
+  },
   data() {
     return {
       yesNoOptions: [
@@ -95,12 +100,6 @@ export default {
       set: function (newValue) {
         this.$emit("update:filters", newValue);
       },
-    },
-    consoles() {
-      return [...new Set(this.roms.map((item) => item.console))];
-    },
-    emulators() {
-      return [...new Set(this.roms.map((item) => item.emulator))];
     },
   },
 };
