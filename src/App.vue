@@ -61,7 +61,7 @@ export default {
             console: item.Console,
             game,
             gameLower: game.toLowerCase(),
-            emulator: item.Emulator,
+            emulator: item.Emulator || item['Emulator '],
             boots: item["Boots"] === "Yes",
             playable: item["Playable"] === "Yes",
             notes: item.Notes,
